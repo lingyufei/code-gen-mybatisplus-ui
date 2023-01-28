@@ -53,5 +53,3 @@ export const useConfigStore = defineStore('config', () => {
 
  return {packageName, author, generate, tableConfigRequestList, initTableConfigRequest}
 })
-
-
