@@ -10,7 +10,8 @@ export const useConfigStore = defineStore('config', () => {
 
  const optionalConfigRequest = ref<OptionalConfigRequest>({
   ignoreThreadPool: true,
-  ignoreLogInterceptor: true
+  ignoreLogInterceptor: true,
+  ignoreRedis: true
  })
 
  const tableConfigRequestList = ref<TableConfigRequest[]> ([])

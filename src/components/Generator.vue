@@ -46,6 +46,12 @@
               label="添加日志AOP"
             />
           </v-col>
+          <v-col cols="2">
+            <v-checkbox
+              @click="optionalConfigRequest.ignoreRedis= !optionalConfigRequest.ignoreRedis"
+              label="添加Redis配置"
+            />
+          </v-col>
         </v-row>
       </div>
 

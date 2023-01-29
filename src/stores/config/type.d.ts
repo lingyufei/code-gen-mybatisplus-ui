@@ -2,6 +2,7 @@
 declare interface OptionalConfigRequest {
   ignoreThreadPool: boolean,
   ignoreLogInterceptor: boolean,
+  ignoreRedis: boolean,
 }
 
 declare interface TableConfigRequest {
