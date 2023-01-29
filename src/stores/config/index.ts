@@ -1,5 +1,7 @@
 import { ref, computed, toRaw } from 'vue'
 import { defineStore } from 'pinia'
+import { reqGenerate, reqGenerateByDefault } from '@/api'
+import { downloadBlob } from '@/utils/BlobUtils'
 
 //pinia store
 export const useConfigStore = defineStore('config', () => {
@@ -7,15 +9,47 @@ export const useConfigStore = defineStore('config', () => {
   const author = ref("")
 
  const optionalConfigRequest = ref<OptionalConfigRequest>({
-  ignoreThreadPool: false,
-  ignoreLogInterceptor: false
+  ignoreThreadPool: true,
+  ignoreLogInterceptor: true
  })
 
  const tableConfigRequestList = ref<TableConfigRequest[]> ([])
 
- function generate(){
-  console.log(tableConfigRequestList.value);
-  
+ async function generate(mode: boolean){
+  debugger
+  if(mode){
+    return await doGenerate();
+  }else{
+    return await doGenerateByDefault();
+  }
+ }
+
+ /**
+  * 基于配置生成
+  */
+ async function doGenerate(){
+  console.log("doGenerate");
+  if(!tableConfigRequestList.value?.length){
+    throw new Error("请先进行生成器配置，再尝试提交")
+  }
+  return await reqGenerate({
+    packageName: packageName.value, 
+    author: packageName.value,
+    optionalConfigRequest: optionalConfigRequest.value,
+    tableConfigRequestList: tableConfigRequestList.value
+  });
+ }
+
+ /**
+  * 默认生成
+  */
+ async function doGenerateByDefault(){
+  console.log("doGenerateByDefault");
+  return await reqGenerateByDefault({
+    packageName: packageName.value, 
+    author: packageName.value,
+    optionalConfigRequest: optionalConfigRequest.value
+  });
  }
 
  /**
@@ -51,5 +85,5 @@ export const useConfigStore = defineStore('config', () => {
     console.log("pinia", tableConfigRequestList.value);
  }
 
- return {packageName, author, generate, tableConfigRequestList, initTableConfigRequest}
+ return {packageName, author, generate, optionalConfigRequest, tableConfigRequestList, initTableConfigRequest}
 })

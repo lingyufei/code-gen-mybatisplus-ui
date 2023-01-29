@@ -34,42 +34,45 @@
   <v-btn color="primary" @click="queryColumnInfoOfTables">查询字段信息</v-btn>
 
   <div style="width: 75%;">
-    <v-alert v-if="errorInfo.length > 0"
-    closable dense border="start" title="Error" type="error"> {{errorInfo}} </v-alert>
+    <Alert ref="alertRef"></Alert>
   </div>
 </template>
   
 <script setup lang='ts'>
+import Alert from "@/components/Alert.vue"
 import { useDbInfo } from '@/composable/useDbInfo';
 import { onMounted, ref, watchEffect } from 'vue';
   
   const {tableInfos, getTableInfo, getColumnInfoOfTables} = useDbInfo();
   const selectedTable = ref<string[]>([]);
-  const errorInfo = ref("");
+  const alertRef = ref();
 
   /**
    * 查询table的字段信息
    */
   const queryColumnInfoOfTables = async () =>{
     try{
-      errorInfo.value = "";
+      alertRef.value.errorInfo = "";
       await getColumnInfoOfTables(selectedTable.value)
     }catch(e){
-      errorInfo.value = e + "";
+      alertRef.value.errorInfo = e + "";
     }
   }
 
+  /**
+   * 查询表信息
+   */
   const queryTableInfo = async () =>{
     try{
-      errorInfo.value = "";
+      alertRef.value.errorInfo = "";
       await getTableInfo();
     }catch(e){
-      errorInfo.value = e + "";
+      alertRef.value.errorInfo = e + "";
     }
   }
 
   onMounted(() =>{
-    getTableInfo()
+    queryTableInfo()
   })
 
   watchEffect(() =>{

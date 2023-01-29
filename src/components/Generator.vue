@@ -11,7 +11,7 @@
         <v-row>
           <v-col cols="2">
             <v-text-field
-              v-model="firstname"
+              v-model="packageName"
               :counter="10"
               label="包名 如 com.lyf"
               required
@@ -19,7 +19,7 @@
           </v-col>
           <v-col cols="2">
             <v-text-field
-              v-model="firstname"
+              v-model="author"
               :counter="10"
               label="作者 如 LYF"
               required
@@ -35,14 +35,14 @@
         <v-row>
           <v-col cols="2">
             <v-checkbox
-              v-model="ex4"
               label="添加线程池"
               color="info"
+              @click="optionalConfigRequest.ignoreThreadPool= !optionalConfigRequest.ignoreThreadPool"
             ></v-checkbox>
           </v-col>
           <v-col cols="2">
             <v-checkbox
-              v-model="ex4"
+              @click="optionalConfigRequest.ignoreLogInterceptor= !optionalConfigRequest.ignoreLogInterceptor"
               label="添加日志AOP"
             />
           </v-col>
@@ -62,7 +62,11 @@
       <v-divider></v-divider>
 
       <div class="wrapper">
-        <v-btn class="gen-button" color="primary">开始生成</v-btn>
+        <v-btn ref="genButtonRef" class="gen-button" :loading="loading" :disabled="loading"
+        @click="generate" color="primary">开始生成</v-btn>
+      </div>
+      <div class="alert">
+        <Alert ref="alertRef"/>
       </div>
     </v-form>
     <div id="bottom-div"></div>
@@ -70,15 +74,37 @@
 </template>
   
 <script setup lang='ts'>
-import { ref, watch, watchEffect } from 'vue';
+import { ref } from 'vue';
 import TableSelector from "@/components/TableSelector.vue"
 import ColumnConfig from "@/components/ColumnConfig.vue"
+import Alert from "@/components/Alert.vue"
+import { useConfigStore } from '@/stores/config';
+import { storeToRefs } from 'pinia';
+import { downloadBlob, handleBlobError } from '@/utils/BlobUtils';
 
+  const config = useConfigStore();
+  const {packageName, author, optionalConfigRequest} = storeToRefs(config)
   const mode = ref(true)
-  const ex4 = ref([])
-  watchEffect(() =>{
-    console.log(ex4.value);
-  })
+
+  const loading = ref(false)
+  const alertRef = ref();
+
+  /**
+   * 生成代码
+   */
+  const generate = async () =>{
+    try{
+      loading.value = true;
+      alertRef.value.errorInfo = ""
+      let res = await config.generate(mode.value);
+      downloadBlob(res)
+    }catch(e){
+      console.log(e);
+      alertRef.value.errorInfo = "导出文件异常, " + e
+    }finally{
+      loading.value = false;
+    }
+  }
 </script>
   
 <style scoped>
@@ -91,5 +117,10 @@ import ColumnConfig from "@/components/ColumnConfig.vue"
   height: 50px;
   width: 100%;
 }
+
+.alert{
+  margin-top: 10px;
+}
+
 
 </style>

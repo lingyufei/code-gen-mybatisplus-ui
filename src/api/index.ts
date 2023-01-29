@@ -1,3 +1,4 @@
+import blobRequest from "./blobRequest";
 import request from "./request";
 
 export const reqTableList = (tableName?: string) =>{
@@ -9,9 +10,9 @@ export const reqColumnOfTables = (tables: string[]) =>{
 }
 
 export const reqGenerate = (configRequest: ConfigRequest) =>{
-  return request({url: '/db/generate', data: configRequest, method: 'post'});
+  return blobRequest({url: '/db/generate', data: configRequest, method: 'post'});
 }
 
 export const reqGenerateByDefault = (configRequest?: ConfigRequest) =>{
-  return request({url: '/db/generate/default', data: configRequest, method: 'post'});
+  return blobRequest({url: '/db/generate/default', data: configRequest, method: 'post'});
 }

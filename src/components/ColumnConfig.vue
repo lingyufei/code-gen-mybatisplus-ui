@@ -57,9 +57,7 @@
         </tr>
       </template>
     </tbody>
-  </v-table>
-  <v-btn color="primary" @click="log">查询字段信息</v-btn>
-
+  </v-table> 
 </template>
   
 <script setup lang='ts'>
@@ -86,10 +84,6 @@ import { computed, ref, watchEffect } from 'vue';
     console.log("computed", tableColumnInfos);
     return record;
   })
-
-  const log = () =>{
-    config.generate()
-  }
 
 </script>
   
